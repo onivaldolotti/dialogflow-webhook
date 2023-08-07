@@ -37,7 +37,7 @@ app.post('/dialogflow-webhook', async (req, res) => {
           professionalId: parameters.professionalId,
           serviceId: parameters.serviceId,
         };
-        const response2 = await axios.post(`${url}scheduling/available-dates`, { params: availabilityData });
+        const response2 = await axios.get(`${url}scheduling/available-dates?`, { params: availabilityData });
 
         if (Array.isArray(response2.data)) {
           responseText = response2.data.join('\n');
@@ -52,7 +52,7 @@ app.post('/dialogflow-webhook', async (req, res) => {
           serviceId: parameters.serviceId,
           date: parameters.date,
         };
-        const response3 = await axios.get(`${url}scheduling/available-times`, { params: availableTimesData });
+        const response3 = await axios.get(`${url}scheduling/available-times?`, { params: availableTimesData });
 
         if (Array.isArray(response3.data)) {
           responseText = response3.data.join('\n');
