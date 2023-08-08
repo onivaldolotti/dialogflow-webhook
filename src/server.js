@@ -14,6 +14,9 @@ app.post('/dialogflow-webhook', async (req, res) => {
     const intent = req.body.queryResult.intent.displayName;
     const parameters = req.body.queryResult.parameters;
 
+    console.log(intent)
+
+    console.log(parameters)
     let responseText;
 
     switch (intent) {
