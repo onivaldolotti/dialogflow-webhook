@@ -42,7 +42,7 @@ app.post('/dialogflow-webhook', async (req, res) => {
     let responseText;
 
     switch (intent) {
-      case 'Finalização Intent':
+      case 'FinalizaIntent':
         const date = definirHorarioComercial(outputContexts.date, outputContexts.horario_comercial);
         const appointmentData = {
           professionalId: outputContexts.professionalId,
@@ -58,7 +58,7 @@ app.post('/dialogflow-webhook', async (req, res) => {
         }
         break;
 
-      case 'Escolher Dia Intent':
+      case 'DiaIntent':
         const availabilityData = {
           professionalId: outputContexts.professionalId,
           serviceId: outputContexts.serviceId,
@@ -72,7 +72,7 @@ app.post('/dialogflow-webhook', async (req, res) => {
         }
         break;
 
-      case 'Escolher Horário Intent':
+      case 'HoraIntent':
         const availableTimesData = {
           professionalId: outputContexts.professionalId,
           serviceId: outputContexts.serviceId,
