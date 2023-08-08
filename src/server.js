@@ -76,7 +76,7 @@ app.post('/dialogflow-webhook', async (req, res) => {
         const availableTimesData = {
           professionalId: outputContexts.professionalId,
           serviceId: outputContexts.serviceId,
-          date: outputContexts.date,
+          date: outputContexts.date.split('T')[0],
         };
         const response3 = await axios.get(`${url}scheduling/available-times?`, { params: availableTimesData });
 
