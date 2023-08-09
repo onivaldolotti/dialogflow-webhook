@@ -25,7 +25,6 @@ function definirHorarioComercial(dataOriginal, horarioComercial) {
 app.post('/dialogflow-webhook', async (req, res) => {
   try {
     const intent = req.body.queryResult.intent.displayName;
-    const parameters = req.body.queryResult.parameters;
     const outputContexts = req.body.queryResult.outputContexts[0].parameters;
     
     // "parameters": {
@@ -40,6 +39,7 @@ app.post('/dialogflow-webhook', async (req, res) => {
     // }
           
     let responseText;
+    let res;
 
     switch (intent) {
       case 'FinalizaIntent':
@@ -63,12 +63,14 @@ app.post('/dialogflow-webhook', async (req, res) => {
           professionalId: outputContexts.professionalId,
           serviceId: outputContexts.serviceId,
         };
-        const response2 = await axios.get(`${url}scheduling/available-dates?`, { params: availabilityData });
-
-        if (Array.isArray(response2.data)) {
-          responseText = response2.data.join('\n');
-        } else {
+        res = await axios.get(`${url}scheduling/available-dates?`, { params: availabilityData });
+        if(res.data.error) {
           responseText = 'Erro ao obter datas disponíveis.';
+          break;
+        }
+
+        if (Array.isArray(res.data.result)) {
+          responseText = res.data.result.join('\n');
         }
         break;
 
@@ -78,12 +80,15 @@ app.post('/dialogflow-webhook', async (req, res) => {
           serviceId: outputContexts.serviceId,
           date: outputContexts.date.split('T')[0],
         };
-        const response3 = await axios.get(`${url}scheduling/available-times?`, { params: availableTimesData });
+        res = await axios.get(`${url}scheduling/available-times?`, { params: availableTimesData });
 
-        if (Array.isArray(response3.data)) {
-          responseText = response3.data.join('\n');
-        } else {
-          responseText = 'Erro ao obter horários disponíveis.';
+        if(res.data.error) {
+          responseText = 'Erro ao obter horários disponíveis';
+          break;
+        }
+
+        if (Array.isArray(res.data.result)){
+          responseText = res.data.result.join('\n');
         }
         break;
 
