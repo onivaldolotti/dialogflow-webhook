@@ -85,7 +85,7 @@ app.post('/dialogflow-webhook', async (req, res) => {
           date: outputContexts.date.split('T')[0],
         };
         resultSet = await axios.get(`${url}scheduling/available-times?`, { params: availableTimesData });
-console.log(resultSet);
+
         if(resultSet.data?.error) {
           responseText = 'Erro ao obter horários disponíveis';
           break;
@@ -107,7 +107,7 @@ console.log(resultSet);
     res.json(response);
   } catch (error) {
     console.error('Error:', error);
-    res.status(error?.response?.data?.statusCode || 500).json({ fulfillmentText: error?.response?.data?.message || 'Ocorreu um erro' });
+    res.json({ fulfillmentText: error?.response?.data?.message || 'Ocorreu um erro' });
   }
 });
 
