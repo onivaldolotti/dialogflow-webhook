@@ -64,7 +64,7 @@ app.post('/dialogflow-webhook', async (req, res) => {
           serviceId: outputContexts.serviceId,
         };
         res = await axios.get(`${url}scheduling/available-dates?`, { params: availabilityData });
-        if(res.data.error) {
+        if(res.data?.error) {
           responseText = 'Erro ao obter datas disponíveis.';
           break;
         }
@@ -82,7 +82,7 @@ app.post('/dialogflow-webhook', async (req, res) => {
         };
         res = await axios.get(`${url}scheduling/available-times?`, { params: availableTimesData });
 
-        if(res.data.error) {
+        if(res.data?.error) {
           responseText = 'Erro ao obter horários disponíveis';
           break;
         }
