@@ -39,7 +39,7 @@ app.post('/dialogflow-webhook', async (req, res) => {
     // }
           
     let responseText;
-    let res;
+    let resultSet;
 
     switch (intent) {
       case 'FinalizaIntent':
@@ -49,13 +49,17 @@ app.post('/dialogflow-webhook', async (req, res) => {
           serviceId: outputContexts.serviceId,
           appointmentDateTime: date,
         };
-        const response1 = await axios.post(`${url}scheduling/create-appointment`, appointmentData);
+        resultSet = await axios.post(`${url}scheduling/create-appointment`, appointmentData);
 
-        if (response1.data.message === 'Appointment created successfully.') {
-          responseText = 'Agendamento com sucesso.';
-        } else {
+        if(resultSet.data?.error) {
           responseText = 'Agendamento sem sucesso.';
+          break;
         }
+
+        if (resultSet.data.result) {
+          responseText = 'Agendamento com sucesso.';
+        }
+
         break;
 
       case 'DiaIntent':
@@ -63,14 +67,14 @@ app.post('/dialogflow-webhook', async (req, res) => {
           professionalId: outputContexts.professionalId,
           serviceId: outputContexts.serviceId,
         };
-        res = await axios.get(`${url}scheduling/available-dates?`, { params: availabilityData });
-        if(res.data?.error) {
+        resultSet = await axios.get(`${url}scheduling/available-dates?`, { params: availabilityData });
+        if(resultSet.data?.error) {
           responseText = 'Erro ao obter datas disponíveis.';
           break;
         }
 
-        if (Array.isArray(res.data.result)) {
-          responseText = res.data.result.join('\n');
+        if (Array.isArray(resultSet.data.result)) {
+          responseText = resultSet.data.result.join('\n');
         }
         break;
 
@@ -80,15 +84,15 @@ app.post('/dialogflow-webhook', async (req, res) => {
           serviceId: outputContexts.serviceId,
           date: outputContexts.date.split('T')[0],
         };
-        res = await axios.get(`${url}scheduling/available-times?`, { params: availableTimesData });
-
-        if(res.data?.error) {
+        resultSet = await axios.get(`${url}scheduling/available-times?`, { params: availableTimesData });
+console.log(resultSet);
+        if(resultSet.data?.error) {
           responseText = 'Erro ao obter horários disponíveis';
           break;
         }
 
-        if (Array.isArray(res.data.result)){
-          responseText = res.data.result.join('\n');
+        if (Array.isArray(resultSet.data.result)){
+          responseText = resultSet.data.result.join('\n');
         }
         break;
 
@@ -103,7 +107,7 @@ app.post('/dialogflow-webhook', async (req, res) => {
     res.json(response);
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ fulfillmentText: 'Ocorreu um erro.' });
+    res.status(error?.response?.data?.statusCode || 500).json({ fulfillmentText: error?.response?.data?.message || 'Ocorreu um erro' });
   }
 });
 
